@@ -8,6 +8,7 @@ namespace BUS_namespace
 	        string busn, driver;
 	        string seat[8][4];
 	        pair<string,string>src_dest;
+	        vector<string> stations;
 	        pair<string,string>arr_dep;
 	    public:
 	        Bus()
@@ -43,12 +44,25 @@ namespace BUS_namespace
 	    getline(cin,bus.driver);
 	    cout<<"Arrival time: ";
 	    getline(cin,arr);
-	    cout<<"Departure: ";
+	    cout<<"Departure time: ";
 	    getline(cin,dep);
 	    cout<<"From: ";
 	    getline(cin,from);
 	    cout<<"To: ";
 	    getline(cin,to);
+	    bus.stations.push_back(from);
+	    int count;
+	    cout<<"Enter the number of intermediate stations between "<<from<<" and "<<to<<" where the bus will stop :";
+	    cin>>count;
+	    bus.stations.clear();
+	    for(int i=0;i<count;i++)
+	    {
+	    	string city;
+	    	cout<<"Enter the name of station : ";
+	    	cin>>city;
+	    	bus.stations.push_back(city);
+	    }
+	    bus.stations.push_back(to);
 	    bus.src_dest=make_pair(from,to);
 	    bus.arr_dep=make_pair(arr,dep);
 	    return bus.busn;
@@ -71,8 +85,11 @@ namespace BUS_namespace
 	            Bus bus=x->second;
 	            cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
-	                <<bus.arr_dep.second<<"\nFrom: "<<bus.src_dest.first<<"\t\tTo: "
-	                <<bus.src_dest.second<<"\n";
+	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
+	                <<bus.src_dest.second<<"\nRoute: ";
+	            for(auto it:bus.stations)
+	            	cout<<it<<" -> ";
+	            cout<<endl;
 	        }
 	        else
 	        {
@@ -94,15 +111,18 @@ namespace BUS_namespace
 	    	{
 	            Bus bus=x.second;
 	            fflush(stdin);
-	            if(bus.src_dest.first==src && bus.src_dest.second==dest)
+	            if((find(bus.stations.begin(),bus.stations.end(),src)!=bus.stations.end())&&(find(bus.stations.begin(),bus.stations.end(),dest)!=bus.stations.end()))
 	            {
-	                cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	            	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	                    <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
-	                    <<bus.arr_dep.second<<"\nFrom: "<<bus.src_dest.first<<"\t\tTo: "
-	                    <<bus.src_dest.second<<"\n";
-	                    flag=1;
+	                    <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
+	                    <<bus.src_dest.second<<"\nRoute :";
+	                for(auto it:bus.stations)
+	            		cout<<it<<" -> ";
+	            	cout<<endl;
+	                flag=1;
+	        		vline('*');
 	            }
-	            vline('*');
 	        }
 	        if(!flag)
 	        {
@@ -111,7 +131,9 @@ namespace BUS_namespace
 	        }
 	    }
 	    else
+	    {
 	    	cout<<"\n\t\t\tWrong Choice\n";
+		}
 	}
 	//To remove bus
 	void Bus::Remove_Bus()
@@ -209,21 +231,14 @@ namespace BUS_namespace
 	        vline('*');
 	        cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	            <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
-	            <<bus.arr_dep.second<<"\nFrom: "<<bus.src_dest.first<<"\t\tTo: "
-	            <<bus.src_dest.second<<"\n";
+	            <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
+	            <<bus.src_dest.second<<"\nRoute: ";
+	        for(auto it:bus.stations)
+	            	cout<<it<<" -> ";
+	            cout<<endl;
 	        vline('*');
 	        //To check seats
 	        bus.check_seats(n,bus);
-	        int a=1;
-	        for(int i=0; i<8; i++)
-	        {
-	            for(int j=0;j<4;j++)
-	            {
-	                a++;
-	                if(bus.seat[i][j]!="Empty")
-	                    cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus.seat[i][j]<<".";
-	            }
-	        }
 	    }
 	}
 	//To select seats
@@ -271,10 +286,13 @@ namespace BUS_namespace
 	            Bus bus=x.second;
 	            fflush(stdin);
 	            vline('*');
-	           cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	           	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
-	                <<bus.arr_dep.second<<"\nFrom: "<<bus.src_dest.first<<"\t\tTo: "
-	                <<bus.src_dest.second<<"\n";
+	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
+	                <<bus.src_dest.second<<"\nRoute : ";	
+	            for(auto it:stations)
+	            	cout<<it<<" -> ";
+	            cout<<endl;
 	            vline('*');
 	        }
 	    }

@@ -24,6 +24,7 @@ namespace BUS_namespace
 	        void Show_seats();
 	        bool Search_Busses();
 	        void check_seats(int,Bus&);
+	        int availble(string,vector<string>);
 	};
 	//Declaration of Map
 	map<string,Bus>Bus_data;
@@ -36,6 +37,7 @@ namespace BUS_namespace
 	//To alot bus and driver to bus
 	string Bus::Allot_Bus(Bus &bus)
 	{
+	    bus.stations.clear();
 	    string arr,dep,from,to;
 	    cin.ignore();
 	    cout<<"Enter bus no: ";
@@ -52,9 +54,8 @@ namespace BUS_namespace
 	    getline(cin,to);
 	    bus.stations.push_back(from);
 	    int count;
-	    cout<<"Enter the number of intermediate stations between "<<from<<" and "<<to<<" where the bus will stop :";
+	    cout<<"Enter the number of stations between "<<from<<" and "<<to<<" where the bus will stop :";
 	    cin>>count;
-	    bus.stations.clear();
 	    for(int i=0;i<count;i++)
 	    {
 	    	string city;
@@ -66,6 +67,15 @@ namespace BUS_namespace
 	    bus.src_dest=make_pair(from,to);
 	    bus.arr_dep=make_pair(arr,dep);
 	    return bus.busn;
+	}
+	//See destination and arrival position
+	int Bus::availble(string s,vector<string>v)
+	{
+			auto it= find(v.begin(),v.end(),s);
+			if(it!=v.end())
+				return(it-v.begin());
+			else
+				return -1; 
 	}
 	//To search in busses
 	bool Bus::Search_Busses()
@@ -107,11 +117,18 @@ namespace BUS_namespace
 	        getline(cin,src);
 	        cout<<"Enter the destination city : ";
 	        getline(cin,dest);
+	        if(src==dest)
+	        {
+	        	cout<<"Source and Destination can't be same.\n";
+	        	return 0;
+	        }
 	        for(auto x : Bus_data)
 	    	{
 	            Bus bus=x.second;
 	            fflush(stdin);
-	            if((find(bus.stations.begin(),bus.stations.end(),src)!=bus.stations.end())&&(find(bus.stations.begin(),bus.stations.end(),dest)!=bus.stations.end()))
+	            int s=bus.availble(src,bus.stations);
+	            int d=bus.availble(dest,bus.stations);
+	            if((s!=-1)&&(d!=-1)&&(s<d))
 	            {
 	            	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	                    <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
@@ -284,13 +301,13 @@ namespace BUS_namespace
 	        for(auto x : Bus_data)
 	        {
 	            Bus bus=x.second;
-	            fflush(stdin);
+	            fflush(stdout);
 	            vline('*');
 	           	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
-	                <<bus.src_dest.second<<"\nRoute : ";	
-	            for(auto it:stations)
+	                <<bus.src_dest.second<<"\nRoute : ";
+	            for(auto it:bus.stations)
 	            	cout<<it<<" -> ";
 	            cout<<endl;
 	            vline('*');

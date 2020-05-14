@@ -2,7 +2,7 @@
 #include"BRS.h"
 #include"Accounts.h"
 using namespace std;
-using namespace BUS_namespace;
+using namespace Bus_namespace;
 using namespace Accounts_namespace;
 //Varrible to hold screen
 char stop;

@@ -11,6 +11,36 @@ namespace Accounts_namespace
 			pair<string,string>id_pass;
 			string email,phone_no;
 	};
+	//Contains all the validation functions of Account
+	namespace Account_validation_namespace
+	{
+		bool isValidEmail(string email)
+		{
+			const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
+		    return regex_match(email,pattern);
+		}
+		bool isValidPhone(string pno) 
+		{ 
+		    const regex pattern("[0/91]?[6-9][0-9]{9}");
+		    return regex_match(pno,pattern);
+		}
+		//To check for file is empty
+		bool is_empty(std::ifstream& pFile)
+		{
+	    	return pFile.peek() == std::ifstream::traits_type::eof();
+		}
+		bool isExist(string usr)
+		{
+			Register ob;
+			fin.open("Accounts_info", ios::in);
+	 		while(fin >> ob.id_pass.first)
+	 			if(ob.id_pass.first==usr)
+	 				return 1;
+	 		fin.close();
+	 		return 0;
+	 	}
+	}
+	using namespace Account_validation_namespace;
 	//To create horizontal lines
 	void hline(char ch)
 	{
@@ -27,14 +57,32 @@ namespace Accounts_namespace
  		getline(cin,ob.name.first);
  		cout<<"Enter your second name :";
  		getline(cin,ob.name.second);
- 		cout<<"Enter the user name : ";
- 		getline(cin,ob.id_pass.first);
+ 		USERNAME :
+	 		cout<<"Enter the user name : ";
+	 		getline(cin,ob.id_pass.first);
+	 		if(isExist(ob.id_pass.first))
+	 		{
+	 			cout<<"This user name already exist!!! Try another\n";
+	 			goto USERNAME;
+	 		}
  		cout<<"Enter the password : ";
  		getline(cin,ob.id_pass.second);
- 		cout<<"Enter the phone number : ";
- 		getline(cin,ob.phone_no);
- 		cout<<"Enter your email address : ";
- 		getline(cin,ob.email);
+ 		PHONE :
+	 		cout<<"Enter the phone number : ";
+	 		getline(cin,ob.phone_no);
+	 		if(!isValidPhone(ob.phone_no))
+	 		{
+	 			cout<<"Phone number not correct!!! Try again\n";
+	 			goto PHONE;
+	 		}
+ 		EMAIL :
+ 			cout<<"Enter your email address : ";
+ 			getline(cin,ob.email);
+ 			if(!isValidEmail(ob.email))
+ 			{
+ 				cout<<"Email not correct!!! Try again\n";
+ 				goto EMAIL;
+ 			}
  		fout<<ob.name.first<<" "<<ob.name.second<<" "<<ob.id_pass.first<<" "
  			<<ob.id_pass.second<<" "<<ob.phone_no<<" "<<ob.email<<"\n";
  		system("clear");
@@ -63,7 +111,12 @@ namespace Accounts_namespace
  		Register ob;
  		fflush(stdin);
  		fin.open("Accounts_info", ios::in);
- 		cout<<"\t\t\t\n\nThese are the data in file\n\n";
+ 		if(is_empty(fin))
+ 		{
+ 			cout<<"\n\t\t\tNot any user registered till now.\n";
+ 			return;
+ 		}
+ 		cout<<"\n\n\t\tThese are the users profile who registered.\n\n";
  		hline('*');
  		while(fin >> ob.name.first >> ob.name.second >> ob.id_pass.first >>ob.id_pass.second >>ob.phone_no>>ob.email)
  		{
@@ -96,12 +149,10 @@ namespace Accounts_namespace
  		while(fin >> ob.id_pass.first >>ob.id_pass.second)
  		{
  			if(ob.id_pass.first==usr_nm && ob.id_pass.second==password)
- 			{
-
- 				return usr_nm;
- 			}	
+ 				return usr_nm;	
  			else if(ob.id_pass.first==usr_nm && ob.id_pass.second!=password)
  			{
+ 				cout<<ob.id_pass.first<<"  "<<ob.id_pass.second<<endl;
  				fin.close();
  				cout<<"\t\t\tPassword Incorrect\n";
  				return "\0";
@@ -132,10 +183,22 @@ namespace Accounts_namespace
  				getline(cin,ob.name.second);
  				cout<<"Enter the password : ";
  				getline(cin,ob.id_pass.second);
- 				cout<<"Enter the phone number : ";
- 				getline(cin,ob.phone_no);
- 				cout<<"Enter your email address : ";
- 				getline(cin,ob.email);
+ 				PHONE :
+			 		cout<<"Enter the phone number : ";
+			 		getline(cin,ob.phone_no);
+			 		if(!isValidPhone(ob.phone_no))
+			 		{
+			 			cout<<"Phone number not correct!!! Try again\n";
+			 			goto PHONE;
+			 		}
+		 		EMAIL :
+		 			cout<<"Enter your email address : ";
+		 			getline(cin,ob.email);
+		 			if(!isValidEmail(ob.email))
+		 			{
+		 				cout<<"Email not correct!!! Try again\n";
+		 				goto EMAIL;
+		 			}
  				fout<<ob.name.first<<" "<<ob.name.second<<" "<<ob.id_pass.first<<" "
  					<<ob.id_pass.second<<" "<<ob.phone_no<<" "<<ob.email<<"\n";
  			}
@@ -165,3 +228,4 @@ namespace Accounts_namespace
  		cout<<"\n\t\tProfile with username : "<<usr_nm<<" deleted";
  	}
 }
+

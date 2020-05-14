@@ -1,7 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
-namespace BUS_namespace
+namespace Bus_namespace
 {
+	//Definition of class Bus
 	class Bus
 	{
 	    private:
@@ -28,6 +29,28 @@ namespace BUS_namespace
 	};
 	//Declaration of Map
 	map<string,Bus>Bus_data;
+	//Validation purpose
+	namespace Bus_validation_namespace
+	{
+		bool isValidTime(string str)
+		{
+			if(str.length()<5||str.length()>5)
+				return 0;
+			if(str[0]!='0'&&str[0]!='1'&&str[0]!='2')
+				return 0;
+			else if(str[1]!='0'&&str[1]!='1'&&str[1]!='2'&&str[1]!='3'&&str[1]!='4'&&str[1]!='5'&&str[1]!='6'&&str[1]!='7'&&str[1]!='8'&&str[1]!='9')
+				return 0;
+			else if(str[2]!=':')
+				return 0;
+			else if(str[3]!='0'&&str[3]!='1'&&str[3]!='2'&&str[3]!='3'&&str[3]!='4'&&str[3]!='5')
+				return 0;
+			else if(str[4]!='0'&&str[4]!='1'&&str[4]!='2'&&str[4]!='3'&&str[4]!='4'&&str[4]!='5'&&str[4]!='6'&&str[4]!='7'&&str[4]!='8'&&str[4]!='9')
+				return 0;
+			else
+				return 1;
+		}
+	}
+	using namespace Bus_validation_namespace;
 	//To draw vertical lines
 	void vline(char ch)
 	{
@@ -39,15 +62,27 @@ namespace BUS_namespace
 	{
 	    bus.stations.clear();
 	    string arr,dep,from,to;
-	    cin.ignore();
+	    //cin.ignore();
 	    cout<<"Enter bus no: ";
 	    getline(cin,bus.busn);
 	    cout<<"Enter Driver's name: ";
 	    getline(cin,bus.driver);
-	    cout<<"Arrival time: ";
-	    getline(cin,arr);
-	    cout<<"Departure time: ";
-	    getline(cin,dep);
+	    ARRIVAL:
+	    	cout<<"Enter the arrival time(hh:mm): ";
+	    	getline(cin,arr);
+	    	if(!isValidTime(arr))
+	    	{
+	    		cout<<"Enter valid date in hh:mm format\n";
+	    		goto ARRIVAL;
+	    	}
+	    DEPARTURE:
+	    	cout<<"Enter the departure time(hh:mm): ";
+	    	getline(cin,dep);
+	    	if(!isValidTime(dep))
+	    	{
+	    		cout<<"Enter valid time in hh:mm format\n";
+	    		goto DEPARTURE;
+	    	}
 	    cout<<"From: ";
 	    getline(cin,from);
 	    cout<<"To: ";

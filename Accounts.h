@@ -2,33 +2,49 @@
 using namespace std;
 namespace Accounts_namespace
 {
+	//Object of ofstream and ifstream class for input and output data in file.
+	//The file that has been used here is Accounts_info file.
 	ofstream fout;
 	ifstream fin;
+	//This class is used to create an object of registered user.
+	//This will store all the information about user.
+	//And the object of that file has been written to file. 
 	class Register
 	{
 		public :
-			pair<string,string>name;
-			pair<string,string>id_pass;
-			string email,phone_no;
+			pair<string,string>name; //This is a pair used for storing the first and last name of the user.
+			pair<string,string>id_pass;	//This will store the Id-password of a particular user.
+			string email,phone_no; //These will  stores the additional information about user.
 	};
-	//Contains all the validation functions of Account
+	//Contains all the validation functions of user account.(P)
 	namespace Account_validation_namespace
 	{
+		//This method is used to check weater the user has entered his email in correct format or not.
+		//It returns a true value if the format is correct otherwise false.
+		//Here I have used regular expressions popularly known as regex.
 		bool isValidEmail(string email)
 		{
 			const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
 		    return regex_match(email,pattern);
 		}
+		//Same as above
+		//This method is used to check weater the user has entered his phonenumber in correct format or not.
+		//It returns a true value if the format is correct otherwise false.
+		//Here I have used regular expressions popularly known as regex.
 		bool isValidPhone(string pno) 
 		{ 
 		    const regex pattern("[0/91]?[6-9][0-9]{9}");
 		    return regex_match(pno,pattern);
 		}
-		//To check for file is empty
+		//To check for file is empty.
+		// This procedure is used to check for empty files,when not any user is registered.
 		bool is_empty(std::ifstream& pFile)
 		{
 	    	return pFile.peek() == std::ifstream::traits_type::eof();
 		}
+		//This procedure is made to avoid duplicacy of username.
+		//If username already exist and someone try to make account with the same username.
+		//It will return a false value. 
 		bool isExist(string usr)
 		{
 			Register ob;
@@ -41,15 +57,19 @@ namespace Accounts_namespace
 	 	}
 	}
 	using namespace Account_validation_namespace;
-	//To create horizontal lines
+	//To create horizontal lines as data seperator.
 	void hline(char ch)
 	{
 	  for (int i=120;i>0;i--)
 	    cout<<ch;
 	}
-	//User Function	
+	//User Function	to make his/her account(K)
+	//This function is used to make profile of user while registering (him/her)self.
  	void makeAccount()
  	{
+ 		//All the data is merged into an object of class register and then that object has been written to file.
+ 		//Validation procedure regarding to entry of duplicate username misformatted phone number and email 
+ 		//has been used so that enterd data is not corrupted.
  		Register ob;
  		cin.ignore();
  		fout.open("Accounts_info", ios::app);
@@ -89,7 +109,7 @@ namespace Accounts_namespace
  		cout<<"\n\t\t\tAccount created succesfully,\n\t\t\tLogin to continue\n";
  		fout.close(); 
  	}
- 	//User Function
+ 	//User Function to show his own profile it will take the username as input.(K)
  	void showProfile(string usr_nm)
  	{
  		Register ob;
@@ -105,7 +125,7 @@ namespace Accounts_namespace
  					<<endl;	
  		fin.close();
  	}
- 	//Admin Funtction
+ 	//Admin Funtction to show all the registered user of system.(K)
  	void showallProfile()
  	{
  		Register ob;
@@ -133,7 +153,8 @@ namespace Accounts_namespace
  		hline('*');
  		fin.close();
  	}
- 	//User Function
+ 	//User Function to Login if he/she already made his/her account.(P)
+ 	//Note this function return the string as username if user is registered otherwise  null has been returned.
  	string Login()
  	{
  		system("clear");
@@ -162,7 +183,9 @@ namespace Accounts_namespace
  		fin.close();
  		return "\0";
  	}
- 	//User Function
+ 	//User Function to modify his/her profile.(K)
+ 	//It takes user_name as input and modify account data of particular user.
+ 	//Note user is not permitted to modify his/her username
  	void modifyProfile(string usr_nm)
  	{
  		Register ob;
@@ -175,6 +198,9 @@ namespace Accounts_namespace
  					<<ob.id_pass.second<<" "<<ob.phone_no<<" "<<ob.email<<"\n";
  			else
  			{
+ 				//Here also validation procedures has been used to keep track of valid data.
+ 				//Username of the user can not be modified as it is the key or the session value by which 
+ 				//user has been logged in.
  				cout<<"\t\tNote : You can't modify your username\n";
  				cin.ignore();
  				cout<<"Enter your first name :";
@@ -209,7 +235,8 @@ namespace Accounts_namespace
  		rename("temp","Accounts_info");
  		cout<<"\n\t\tAccount data modified";
  	}
- 	//User Function
+ 	//User Function if he/she wants to delete his profile.(K)
+ 	//This will take user name as input and profile with that user name will be deleted.
  	void deleteProfile(string usr_nm)
  	{
  		Register ob;

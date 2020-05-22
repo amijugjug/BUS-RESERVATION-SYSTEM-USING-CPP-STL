@@ -6,32 +6,35 @@ namespace Bus_namespace
 	class Bus
 	{
 	    private:
-	        string busn, driver;
-	        string seat[8][4];
-	        pair<string,string>src_dest;
-	        vector<string> stations;
-	        pair<string,string>arr_dep;
+	        string busn,driver,date;      //To store bus number and driver name and date
+	        string seat[8][4];		  //A string array to store the information of the reserved seats of bus.
+	        pair<string,string>src_dest; //A pair which will store the source and destination of bus.
+	        vector<string> stations;	//A vectore which contains all the intermediate stations between source and destination.
+	        pair<string,string>arr_dep; //A pair which contains arrival and departure time of a bus from a station.
 	    public:
+	    	//A constructor which allocates vacant seats when object is created.
 	        Bus()
 	        {
 	            for(int i=0; i<8;i++)
 	                for(int j=0;j<4;j++)
 	                    seat[i][j]="Empty";
 	        }
-	        string Allot_Bus(Bus&);
-	        void Remove_Bus();
-	        void Show_Buses();
-	        void Allot_Seat();
-	        void Show_seats();
-	        bool Search_Busses();
-	        void check_seats(int,Bus&);
-	        int availble(string,vector<string>);
+	        string Allot_Bus(Bus&);	//This functions allocate the bus and returns the bus number.
+	        void Remove_Bus();  //This function will remove the busses.
+	        void Show_Buses();	//This method will show the available busses.
+	        void Allot_Seat();	//This method is used to alot the seat in a bus.(Reservation)
+	        void Show_seats();	//Show seats will show you the vacant+occupied seats of an availble bus.
+	        bool Search_Busses(); //This procedure is made for searching for bus in map.
+	        void check_seats(int,Bus&); //Check for availbility of particular seat in an availble bus.
+	        int availble(string,vector<string>);	//Check for availbility of bus for stations.
 	};
 	//Declaration of Map
 	map<string,Bus>Bus_data;
-	//Validation purpose
+	//A namespace in which all the validation procedures are written
 	namespace Bus_validation_namespace
 	{
+		//This is a validation method used to validate arival and departure time format. (P)
+		//Time should be in hh:mm format and 24 hour time format is acceptable.
 		bool isValidTime(string str)
 		{
 			if(str.length()<5||str.length()>5)
@@ -49,24 +52,39 @@ namespace Bus_namespace
 			else
 				return 1;
 		}
+		//This is also a validation method used to validate date format.(P)
+		//Date should be entered through dd/mm/yyyy format otherwise it will no be accepted
+		bool isValidDate(string str)
+		{
+			if(str.length()<10||str.length()>10)
+				return false;
+			//if()
+			return true;
+		}
 	}
 	using namespace Bus_validation_namespace;
-	//To draw vertical lines
+	//To draw lines as data seperator
 	void vline(char ch)
 	{
 	  for (int i=80;i>0;i--)
 	    cout<<ch;
 	}
-	//To alot bus and driver to bus
+	//Admin Function to alot a bus with relevant details like driver,(K)
+	//its arrival and departure time its source and destination 
+	//the intermediate stations between source and destination.
+	//It returns the bus number.
 	string Bus::Allot_Bus(Bus &bus)
 	{
 	    bus.stations.clear();
 	    string arr,dep,from,to;
-	    //cin.ignore();
+	    cin.ignore();
 	    cout<<"Enter bus no: ";
 	    getline(cin,bus.busn);
 	    cout<<"Enter Driver's name: ";
 	    getline(cin,bus.driver);
+	    cout<<"Enter the date :";
+	    getline(cin,bus.date);
+	    //Validations of date and time have been done here.
 	    ARRIVAL:
 	    	cout<<"Enter the arrival time(hh:mm): ";
 	    	getline(cin,arr);
@@ -89,6 +107,7 @@ namespace Bus_namespace
 	    getline(cin,to);
 	    bus.stations.push_back(from);
 	    int count;
+	    //Vector has been used to keep details of intermediate cities
 	    cout<<"Enter the number of stations between "<<from<<" and "<<to<<" where the bus will stop :";
 	    cin>>count;
 	    for(int i=0;i<count;i++)
@@ -103,7 +122,10 @@ namespace Bus_namespace
 	    bus.arr_dep=make_pair(arr,dep);
 	    return bus.busn;
 	}
-	//See destination and arrival position
+	//See destination and arrival position(P)
+	//It is used as internal function to check for the location between source and destination. 
+	//It returns the position of that location if found else return -1.
+	//It is used when we want to check weather the entered city is in vector or not.
 	int Bus::availble(string s,vector<string>v)
 	{
 			auto it= find(v.begin(),v.end(),s);
@@ -112,7 +134,8 @@ namespace Bus_namespace
 			else
 				return -1; 
 	}
-	//To search in busses
+	//User+Admin function to search for buses.
+	//It searches in two ways either by bus number or by the station names.(P)
 	bool Bus::Search_Busses()
 	{
 	    char ch;
@@ -121,6 +144,9 @@ namespace Bus_namespace
 	    cin>>ch;
 	    if(ch=='1')
 	    {
+	    	//Here Bus number is entered if bus ith that bus number is availble it will
+	    	//return true otherwise it displays the message that bus with this number is not avilble
+	    	//and return false
 	        string num;
 	        cout<<"Enter the bus number : ";
 	        cin>>num;
@@ -129,6 +155,7 @@ namespace Bus_namespace
 	            auto x=Bus_data.find(num);
 	            Bus bus=x->second;
 	            cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	            	<<"\t\tDate: "<<bus.date
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                <<bus.src_dest.second<<"\nRoute: ";
@@ -145,6 +172,8 @@ namespace Bus_namespace
 	    }
 	    else if(ch=='2')
 	    {
+	    	//In this the user has been asked to enter the cities from where he wants to travel and til where he 
+	    	//wants to travel.
 	        int flag=0;
 	        string src,dest;
 	        cin.ignore();
@@ -152,20 +181,27 @@ namespace Bus_namespace
 	        getline(cin,src);
 	        cout<<"Enter the destination city : ";
 	        getline(cin,dest);
+	        //If source and destination cities entered by user is same it will display this error message.
 	        if(src==dest)
 	        {
 	        	cout<<"Source and Destination can't be same.\n";
 	        	return 0;
 	        }
+	        //If not it will check for every bus for the entered cities
 	        for(auto x : Bus_data)
 	    	{
 	            Bus bus=x.second;
 	            fflush(stdin);
+	            //Here availble() function is used to check for availble source and destination between intermediate cities
 	            int s=bus.availble(src,bus.stations);
 	            int d=bus.availble(dest,bus.stations);
+	            //Parameters used for checking is
+	            //If s==-1 or d==-1 it shows that location is not availble where the user wants to go.
+	            //s<d signifies that source station should come before destination
 	            if((s!=-1)&&(d!=-1)&&(s<d))
 	            {
 	            	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	            		<<"\t\tDate: "<<bus.date
 	                    <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                    <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                    <<bus.src_dest.second<<"\nRoute :";
@@ -176,18 +212,20 @@ namespace Bus_namespace
 	        		vline('*');
 	            }
 	        }
+	        //If not availble it shows this messagge to console.
 	        if(!flag)
 	        {
 	            cout<<"No bus from "<<src<<" to "<<dest<<" availble";
 	            return 0;
 	        }
 	    }
+	    //This block will run if user enter a wrong choice. 
 	    else
 	    {
 	    	cout<<"\n\t\t\tWrong Choice\n";
 		}
 	}
-	//To remove bus
+	//Admin Function It is used to remove a particular bus.(K)
 	void Bus::Remove_Bus()
 	{
 	    if(Bus_data.empty())
@@ -195,6 +233,7 @@ namespace Bus_namespace
 	        cout<<"\n\t\t\tSorry no bus availble now\n";
 	        return;
 	    }
+	    //It ask for bus number and remove that key value pair from map.
 	    string number;
 	    cout<<"Enter the bus number to be removed :";
 	    cin.ignore();
@@ -208,7 +247,8 @@ namespace Bus_namespace
 	        cout<<"Bus with bus number : "<<number<<" has been removed \n";
 	    }
 	}
-	//To book seats by the passenger
+	//This method is used for reservation purpose to book seats by the passenger(K)
+	//This method is used to book a seat in bus.
 	void Bus::Allot_Seat()
 	{
 	    if(Bus_data.empty())
@@ -220,6 +260,8 @@ namespace Bus_namespace
 	    string number;
 	    Bus bus;
 	    cout<<"\nCheck your bus is availble or not\n";
+	    //Here search procedure is used if it return the true value.
+	    //We will take the bus number from user and book the dezired seat.
 	    if(bus.Search_Busses())
 	    {
 	    top:
@@ -227,12 +269,14 @@ namespace Bus_namespace
 	        cout<<"Bus no: ";
 	        getline(cin,number);
 	        int n;
+	        //If bus with that bus number is not availble then this message will be displayed.
 	        if(Bus_data.find(number)==Bus_data.end())
 	        {
 	            char ch;
 	            cout<<"No bus availble with bus number "<<number<<endl;
 	            cout<<"Press 1 to check again else to cancel : ";
 	            cin>>ch;
+	            //If user mistakenly entered a wrong number he/she could again enter the bus number by presseing 1.
 	            if(ch=='1')
 	                goto top;
 	        }
@@ -245,10 +289,14 @@ namespace Bus_namespace
 	        {
 	            cout<<"\nSeat Number: ";
 	            cin>>seat;
+	            //Since a bus have only 32 seats so seat number more than 32 is not availble.
 	            if(seat>32)
 	                cout<<"\nThere are only 32 seats availble in this bus.";
 	            else
 	            {
+	            	//If the seat is empty then only seat can be booked.
+	            	//If any seat has already been booked by anyone then seat
+	            	//will not be availble for booking by other users.
 	                if (bus.seat[seat/4][(seat%4)-1]=="Empty")
 	                {
 	                    cout<<"Enter passanger's name: ";
@@ -262,7 +310,8 @@ namespace Bus_namespace
 	        }
 	    }
 	}
-	//To check the availble seats
+	//User +Admin function to check the availble seats in a bus.(K)
+	//This procedure works on taking bus number.
 	void Bus::Show_seats()
 	{
 	    if(Bus_data.empty())
@@ -274,14 +323,17 @@ namespace Bus_namespace
 	    char number[15];
 	    cout<<"Enter bus no: ";
 	    cin>>number;
+	    //Bus number has been taken and if no bus with that bus number is availble this error message will prompt.
 	    if(Bus_data.find(number)==Bus_data.end())
 	        cout<<"No bus availble with this number";
+	    //Else bus with that number has been showed.
 	    else
 	    {
 	        auto x= Bus_data.find(number);
 	        Bus bus=(*x).second;
 	        vline('*');
 	        cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	        	<<"\t\tDate: "<<bus.date
 	            <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	            <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	            <<bus.src_dest.second<<"\nRoute: ";
@@ -293,7 +345,9 @@ namespace Bus_namespace
 	        bus.check_seats(n,bus);
 	    }
 	}
-	//To select seats
+	//This procedure is used to print the seats.(P)
+	//It will keep count of the empty seats in a bus.
+	//And show which seat has already been booked by which user.
 	void Bus::check_seats(int l,Bus &bus)
 	{
 	    int seat_no=0,emp_seats=0;
@@ -305,6 +359,7 @@ namespace Bus_namespace
 	        for (int j = 0;j<4; j++)
 	        {
 	            seat_no++;
+	            //If seat is not booked by any of the user then "Empty" will be printed.
 	            if(bus.seat[i][j]=="Empty")
 	            {
 	                cout.width(5);
@@ -315,6 +370,7 @@ namespace Bus_namespace
 	                cout<<bus.seat[i][j];
 	                emp_seats++;
 	            }
+	            //Else the name of the person for whom seat is booked will be printed.
 	            else
 	            {
 	                cout.width(5);
@@ -328,7 +384,7 @@ namespace Bus_namespace
 	    }
 	    cout<<"\n\nThere are "<<emp_seats<<" seats empty in Bus No: "<<bus.busn;
 	}
-	//Checking Availblity of busses
+	//This procedure shows the deatils of all the buses availble by the portal.(K)
 	void Bus::Show_Buses()
 	{
 	    if(!Bus_data.empty())
@@ -339,6 +395,7 @@ namespace Bus_namespace
 	            fflush(stdout);
 	            vline('*');
 	           	cout<<"\nBus no: "<<bus.busn<<"\nDriver: "<<bus.driver
+	           		<<"\t\tDate: "<<bus.date
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                <<bus.src_dest.second<<"\nRoute : ";

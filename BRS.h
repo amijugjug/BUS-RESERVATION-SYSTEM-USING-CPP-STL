@@ -56,9 +56,35 @@ namespace Bus_namespace
 		//Date should be entered through dd/mm/yyyy format otherwise it will no be accepted
 		bool isValidDate(string str)
 		{
-			if(str.length()<10||str.length()>10)
+			if(str.length()!=10)
 				return false;
-			//if()
+			if(str[2]!='/'||str[5]!='/')
+				return false;
+			//Converting string to integer
+			int d=abs(('0'-str[0])*10+('0'-str[1]));
+			int m=abs(('0'-str[3])*10+('0'-str[4]));
+			int y=abs(('0'-str[6])*1000+('0'-str[7])*100+('0'-str[8])*10+('0'-str[9]));
+			
+			//gregorian dates started in 1582
+			if (! (1582<= y )  )//comment these 2 lines out if it bothers you
+				return false;
+			if (! (1<= m && m<=12) )
+				return false;
+			if (! (1<= d && d<=31) )
+				return false;
+			if ( (d==31) && (m==2 || m==4 || m==6 || m==9 || m==11) )
+				return false;
+			if ( (d==30) && (m==2) )
+				return false;
+			if ( (m==2) && (d==29) && (y%4!=0) )
+				return false;
+			if ( (m==2) && (d==29) && (y%400==0) )
+				return true;
+			if ( (m==2) && (d==29) && (y%100==0) )
+				return false;
+			if ( (m==2) && (d==29) && (y%4==0)  )
+				return true;
+
 			return true;
 		}
 	}
@@ -66,7 +92,7 @@ namespace Bus_namespace
 	//To draw lines as data seperator
 	void vline(char ch)
 	{
-	  for (int i=80;i>0;i--)
+	  for (int i=100;i>0;i--)
 	    cout<<ch;
 	}
 	//Admin Function to alot a bus with relevant details like driver,(K)
@@ -82,8 +108,14 @@ namespace Bus_namespace
 	    getline(cin,bus.busn);
 	    cout<<"Enter Driver's name: ";
 	    getline(cin,bus.driver);
-	    cout<<"Enter the date :";
-	    getline(cin,bus.date);
+	    DATE:
+	    	cout<<"Enter the date (dd/mm/yyyy) :";
+	    	getline(cin,bus.date);
+	    	if(!isValidDate(bus.date))
+	    	{
+	    		cout<<"Enter valid date in dd/mm/yyyy format\n";
+	    		goto DATE;
+	    	}
 	    //Validations of date and time have been done here.
 	    ARRIVAL:
 	    	cout<<"Enter the arrival time(hh:mm): ";
@@ -159,9 +191,19 @@ namespace Bus_namespace
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                <<bus.src_dest.second<<"\nRoute: ";
-	            for(auto it:bus.stations)
-	            	cout<<it<<" -> ";
+	            bool flag=true;
+                for(auto it:bus.stations)
+                {
+                	if(flag)
+            		{
+            			cout<<it;
+            			flag=false;
+            		}
+            		else
+            			cout<<" -> "<<it;
+            	}
 	            cout<<endl;
+	            return 1;
 	        }
 	        else
 	        {
@@ -205,8 +247,17 @@ namespace Bus_namespace
 	                    <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                    <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                    <<bus.src_dest.second<<"\nRoute :";
+	                bool f=true;
 	                for(auto it:bus.stations)
-	            		cout<<it<<" -> ";
+	                {
+	                	if(flag)
+	            		{
+	            			cout<<it;
+	            			f=false;
+	            		}
+	            		else
+	            			cout<<" -> "<<it;
+	            	}
 	            	cout<<endl;
 	                flag=1;
 	        		vline('*');
@@ -218,6 +269,8 @@ namespace Bus_namespace
 	            cout<<"No bus from "<<src<<" to "<<dest<<" availble";
 	            return 0;
 	        }
+	        else
+	        	return 1;
 	    }
 	    //This block will run if user enter a wrong choice. 
 	    else
@@ -266,7 +319,7 @@ namespace Bus_namespace
 	    {
 	    top:
 	        cin.ignore();
-	        cout<<"Bus no: ";
+	        cout<<"\nBus no: ";
 	        getline(cin,number);
 	        int n;
 	        //If bus with that bus number is not availble then this message will be displayed.
@@ -337,8 +390,17 @@ namespace Bus_namespace
 	            <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	            <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	            <<bus.src_dest.second<<"\nRoute: ";
-	        for(auto it:bus.stations)
-	            	cout<<it<<" -> ";
+	        bool flag=true;
+            for(auto it:bus.stations)
+            {
+            	if(flag)
+        		{
+        			cout<<it;
+        			flag=false;
+        		}
+        		else
+        			cout<<" -> "<<it;
+        	}
 	            cout<<endl;
 	        vline('*');
 	        //To check seats
@@ -399,8 +461,17 @@ namespace Bus_namespace
 	                <<"\t\tArrival time: "<<bus.arr_dep.first<<"\tDeparture Time: "
 	                <<bus.arr_dep.second<<"\nSource: "<<bus.src_dest.first<<"\t\tDestination: "
 	                <<bus.src_dest.second<<"\nRoute : ";
-	            for(auto it:bus.stations)
-	            	cout<<it<<" -> ";
+	            bool flag=true;
+                for(auto it:bus.stations)
+                {
+                	if(flag)
+            		{
+            			cout<<it;
+            			flag=false;
+            		}
+            		else
+            			cout<<" -> "<<it;
+            	}
 	            cout<<endl;
 	            vline('*');
 	        }

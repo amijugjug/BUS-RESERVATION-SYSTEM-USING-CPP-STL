@@ -146,7 +146,7 @@ namespace Bus_namespace
 	    {
 	    	string city;
 	    	cout<<"Enter the name of station : ";
-	    	cin>>city;
+	    	getline(cin,city);
 	    	bus.stations.push_back(city);
 	    }
 	    bus.stations.push_back(to);
